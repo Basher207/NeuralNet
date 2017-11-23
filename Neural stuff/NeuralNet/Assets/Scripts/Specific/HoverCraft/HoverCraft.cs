@@ -17,7 +17,7 @@ public class HoverCraft : MonoBehaviour {
 	}
 	void FixedUpdate () {
 		if (rigidBod.bodyType != RigidbodyType2D.Static) {
-			rigidBod.velocity = (transform.up * maxThrotalForce);//transform.up * throtal * maxThrotalForce);
+			rigidBod.velocity = transform.up * throtal * maxThrotalForce;
 			rigidBod.angularVelocity = (GameMath.Map (torque, 0f, 1f, -1f, 1f) * maxTorqueForce);
 		}
 	}

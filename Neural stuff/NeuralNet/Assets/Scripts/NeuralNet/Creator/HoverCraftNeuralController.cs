@@ -24,8 +24,13 @@ public class HoverCraftNeuralController : MonoBehaviour {
 	[HideInInspector] public Vector2 boxCollSize;
 	[HideInInspector] public BoxCollider2D boxColl;
 	[HideInInspector] public Vector2 previousLoc;
+	[HideInInspector] public float timeOfStart;
 
-
+	public float lifeTime {
+		get {
+			return Time.time - timeOfStart;
+		}
+	}
 	public Vector2 lastFitnessPivotPoint;
 	public float fitnessAtPivotReached;
 	public float fitness = 0f;
@@ -79,12 +84,14 @@ public class HoverCraftNeuralController : MonoBehaviour {
 		boxCollSize = boxColl.size;
 	}
 	public void SetNeuralGraph (NeuralGraph sourceGraph, float mutationMag) {
-		if (Mathf.Abs (mutationMag) > 0.001f) {
+//		if (Mathf.Abs (mutationMag) > 0.0001f) {
 			neuralGraph = new NeuralGraph (sourceGraph);
 			neuralGraph.Mutate (mutationMag);
-		} else {
-			neuralGraph = sourceGraph;
-		}
+//		} else {
+//			neuralGraph = new NeuralGraph (sourceGraph);
+//		}
+
+		timeOfStart = Time.time;
 //		} else {
 //			Debug.Log ("default graph");
 //			neuralGraph = sourceGraph;
@@ -99,6 +106,13 @@ public class HoverCraftNeuralController : MonoBehaviour {
 
 		throtalOutput	= neuralGraph.nuronSources[throtalOutputIndex];
 		torqueOutput	= neuralGraph.nuronSources[torqueOutputIndex];
+
+		float neuralVal = torqueOutput.currentValue;
+		float sourceVal = sourceGraph.nuronSources [torqueOutputIndex].currentValue;
+
+		if (neuralVal != sourceVal) {
+			Debug.Log ("neuralVal: " + neuralVal + ", sourceVal: " + sourceVal);
+		}
 	}
 	void SetGraph () {
 
@@ -119,6 +133,9 @@ public class HoverCraftNeuralController : MonoBehaviour {
 	}
 	bool swapRays = false;
 	public void FixedUpdate () {
+//		if (lifeTime > 30f) {
+//			this.enabled = false;
+//		}
 		Vector2 pos = transform.position;
 
 //		float distanceToLastPivot = Vector2.Distance (lastFitnessPivotPoint, pos);
@@ -162,8 +179,8 @@ public class HoverCraftNeuralController : MonoBehaviour {
 //		Debug.Log (GameMath.sigmoid (throtalOutput.currentValue));
 
 
-		craftController.throtal = GameMath.StretchNumber (throtalOutput.currentValue, 0.5f, 2f, 0f, 1f);
-		craftController.torque 	= torqueOutput.currentValue;//GameMath.StretchNumber (torqueOutput.currentValue, 0.5f, 2f, 0f, 1f);
+		craftController.throtal = throtalOutput.currentValue;//GameMath.StretchNumber (throtalOutput.currentValue, 0.5f, 2f, 0f, 1f);
+		craftController.torque = torqueOutput.currentValue; //> 0.5f ? 1f : 0f;//torqueOutput.currentValue;//GameMath.StretchNumber (torqueOutput.currentValue, 0.5f, 2f, 0f, 1f);
 
 //		if (swapRays) {
 //			craftController.torque = 1 - craftController.torque;

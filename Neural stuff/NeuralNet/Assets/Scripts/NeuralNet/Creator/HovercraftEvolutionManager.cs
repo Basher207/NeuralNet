@@ -106,7 +106,7 @@ public class HovercraftEvolutionManager : MonoBehaviour {
 	}
 	void FixedUpdate () {
 		if (Time.fixedTime > timeForFitnessCheck) {
-			timeForFitnessCheck = Time.fixedTime + 3f;
+			timeForFitnessCheck = Time.fixedTime + 0.5f;
 			bool resetPopulation = true;
 			for (int i = 0; i < neuralControllers.Length; i++) {
 				float currentFitness = neuralControllers [i].fitness;
