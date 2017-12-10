@@ -86,6 +86,8 @@ public class HoverCraftNeuralController : MonoBehaviour {
 	public void SetNeuralGraph (NeuralGraph sourceGraph, float mutationMag) {
 //		if (Mathf.Abs (mutationMag) > 0.0001f) {
 			neuralGraph = new NeuralGraph (sourceGraph);
+
+		if (!HovercraftEvolutionManager.stopAllMutation)
 			neuralGraph.Mutate (mutationMag);
 //		} else {
 //			neuralGraph = new NeuralGraph (sourceGraph);
@@ -110,9 +112,9 @@ public class HoverCraftNeuralController : MonoBehaviour {
 		float neuralVal = torqueOutput.currentValue;
 		float sourceVal = sourceGraph.nuronSources [torqueOutputIndex].currentValue;
 
-		if (neuralVal != sourceVal) {
-			Debug.Log ("neuralVal: " + neuralVal + ", sourceVal: " + sourceVal);
-		}
+//		if (neuralVal != sourceVal) {
+//			Debug.Log ("neuralVal: " + neuralVal + ", sourceVal: " + sourceVal);
+//		}
 	}
 	void SetGraph () {
 
@@ -133,9 +135,9 @@ public class HoverCraftNeuralController : MonoBehaviour {
 	}
 	bool swapRays = false;
 	public void FixedUpdate () {
-//		if (lifeTime > 30f) {
-//			this.enabled = false;
-//		}
+		if (lifeTime > 120f) {
+			this.enabled = false;
+		}
 		Vector2 pos = transform.position;
 
 //		float distanceToLastPivot = Vector2.Distance (lastFitnessPivotPoint, pos);
@@ -179,7 +181,7 @@ public class HoverCraftNeuralController : MonoBehaviour {
 //		Debug.Log (GameMath.sigmoid (throtalOutput.currentValue));
 
 
-		craftController.throtal = throtalOutput.currentValue;//GameMath.StretchNumber (throtalOutput.currentValue, 0.5f, 2f, 0f, 1f);
+		craftController.throtal = Mathf.Max(0.2f, throtalOutput.currentValue);//GameMath.StretchNumber (throtalOutput.currentValue, 0.5f, 2f, 0f, 1f);
 		craftController.torque = torqueOutput.currentValue; //> 0.5f ? 1f : 0f;//torqueOutput.currentValue;//GameMath.StretchNumber (torqueOutput.currentValue, 0.5f, 2f, 0f, 1f);
 
 //		if (swapRays) {

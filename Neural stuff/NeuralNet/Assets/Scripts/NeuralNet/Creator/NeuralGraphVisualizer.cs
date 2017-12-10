@@ -78,7 +78,7 @@ public class Nuron : NuronSource {
 		int mutatedIndex = Random.Range (0, neuralNode.weights.Length);
 
 		neuralNode.weights [mutatedIndex] += Random.Range (-mutationMagnitude, mutationMagnitude);
-		neuralNode.weights [mutatedIndex] = Mathf.Clamp ((neuralNode.weights [mutatedIndex]), -20, 20f);
+		neuralNode.weights [mutatedIndex] = Mathf.Clamp ((neuralNode.weights [mutatedIndex]), -10, 10f);
 		//neuralNode.bias += Random.Range (-mutationMagnitude, mutationMagnitude);//continuous 
 
 //		for (int i = 0; i < neuralNode.weights.Length; i++) {
@@ -117,6 +117,8 @@ public class NeuralGraph {
 //			Nuron n = (Nuron)nuronSources [indexOfMutation];
 //			n.Mutate (mutationMagnitude);
 //		}
+		if (HovercraftEvolutionManager.stopAllMutation)
+			return;
 		for (int i = 0; i < 2; i++) {
 			int indexOfMutation = Random.Range (0, nuronSources.Length);
 			if (nuronSources [indexOfMutation] is Nuron) {

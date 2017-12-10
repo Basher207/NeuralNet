@@ -3645,7 +3645,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &262639870
 Transform:
   m_ObjectHideFlags: 0
@@ -3660,7 +3660,7 @@ Transform:
   - {fileID: 803090320}
   - {fileID: 640623565}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &262639871
 MonoBehaviour:
@@ -4281,7 +4281,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mutaitonMag: 1
   increaseStages: 5
-  graphVisualizer: {fileID: 1362021361}
+  stopMutation: 0
+  graphVisualizer: {fileID: 262639871}
   neuralController: {fileID: 1620995518}
   population: 50
   neuralControllers: []
@@ -4301,7 +4302,7 @@ Transform:
   m_Children:
   - {fileID: 1620995513}
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &313352462
 MonoBehaviour:
@@ -6094,7 +6095,7 @@ Transform:
   - {fileID: 1803681614}
   - {fileID: 1123418039}
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &432215022
 GameObject:
@@ -10436,7 +10437,7 @@ Transform:
   - {fileID: 274675367}
   - {fileID: 553107320}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &749815903
 GameObject:
@@ -17515,7 +17516,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1225608580
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17542,7 +17543,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mutaitonMag: 1
   increaseStages: 5
-  graphVisualizer: {fileID: 262639871}
+  stopMutation: 0
+  graphVisualizer: {fileID: 746259756}
   neuralController: {fileID: 209527121}
   population: 50
   neuralControllers: []
@@ -20408,7 +20410,7 @@ Transform:
   - {fileID: 485182701}
   - {fileID: 1869354749}
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1362021360
 GameObject:
@@ -20425,7 +20427,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1362021361
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20458,7 +20460,7 @@ Transform:
   - {fileID: 1261812433}
   - {fileID: 1954596789}
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1365989867
 GameObject:
@@ -24024,7 +24026,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxThrotalForce: 10
-  maxTorqueForce: 150
+  maxTorqueForce: 120
   throtal: 0
   torque: 0.2
   rigidBod: {fileID: 0}

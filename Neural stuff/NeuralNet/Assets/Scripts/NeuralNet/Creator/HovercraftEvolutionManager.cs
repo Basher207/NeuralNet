@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class HovercraftEvolutionManager : MonoBehaviour {
+	public static bool stopAllMutation;
 
 	public float mutaitonMag;
 
@@ -10,6 +11,7 @@ public class HovercraftEvolutionManager : MonoBehaviour {
 //	public float maxMutaitonMag = 1f;
 
 	public int increaseStages = 20;
+	public bool stopMutation;
 
 	public NeuralGraphVisualizer graphVisualizer;
 
@@ -59,7 +61,7 @@ public class HovercraftEvolutionManager : MonoBehaviour {
 
 		for (int i = 1; i < neuralControllers.Length; i++) {
 			if (neuralControllers [i].fitness > bestController.fitness) {
-				Debug.Log ("Beat! " + neuralControllers[i].fitness + ", oldBest: " + bestController.fitness);
+//				Debug.Log ("Beat! " + neuralControllers[i].fitness + ", oldBest: " + bestController.fitness);
 				bestController = neuralControllers [i];
 			}
 		}
@@ -92,6 +94,7 @@ public class HovercraftEvolutionManager : MonoBehaviour {
 		}
 	}
 	void Update () {
+		stopAllMutation = stopMutation;
 		if (Input.GetKeyDown (KeyCode.Alpha1)) {
 			int throtalOutputIndex = currentBestGraph.nodeKeyToIndex ["throtal"];
 
@@ -117,6 +120,26 @@ public class HovercraftEvolutionManager : MonoBehaviour {
 			}
 			if (resetPopulation)
 				ResetPopulation ();
+		}
+		if (Input.GetKeyDown (KeyCode.T)) {
+			Debug.Log (neuralControllers[2].throtalOutput.currentValue);
+			Debug.Log (neuralControllers[0].torqueOutput.currentValue);
+
+			for (int i = 0; i < currentBestGraph.nuronSources.Length; i++) {
+				if (!(currentBestGraph.nuronSources [i] is Nuron))
+					continue;
+				Nuron neuralNode1 = (Nuron)neuralControllers[0].neuralGraph.nuronSources [i];
+				Nuron neuralNode2 = (Nuron)neuralControllers[1].neuralGraph.nuronSources [i];
+
+				for (int j = 0; j < neuralNode1.neuralNode.weights.Length; j++) {
+					if (neuralNode1.neuralNode.weights [j] != neuralNode2.neuralNode.weights [j]) {
+						Debug.Log (i + ", " + j);
+					}
+				}
+				if (neuralNode1.neuralNode.bias != neuralNode2.neuralNode.bias) {
+					Debug.Log (neuralNode1.neuralNode.bias + "," + neuralNode2.neuralNode.bias);
+				}
+			}
 		}
 	}
 }
