@@ -12,7 +12,7 @@ public class HoverCraftNeuralController : MonoBehaviour {
 	[HideInInspector] public InputNuron sensorLeft;
 	[HideInInspector] public InputNuron sensorForward;
 	[HideInInspector] public InputNuron sensorRight;
-
+	[HideInInspector] public int indexOfHoverCraft;
 	public NuronSource throtalOutput;
 	public NuronSource torqueOutput;
 
@@ -25,6 +25,7 @@ public class HoverCraftNeuralController : MonoBehaviour {
 	[HideInInspector] public BoxCollider2D boxColl;
 	[HideInInspector] public Vector2 previousLoc;
 	[HideInInspector] public float timeOfStart;
+	[HideInInspector] public HovercraftEvolutionManager manager;
 
 	public float lifeTime {
 		get {
@@ -33,8 +34,9 @@ public class HoverCraftNeuralController : MonoBehaviour {
 	}
 	public Vector2 lastFitnessPivotPoint;
 	public float fitnessAtPivotReached;
+	public float gainableFitnessTillNextPivot;
 	public float fitness = 0f;
-	public const float minPivotRadius = 8f;
+	public const float minPivotRadius = 4f;
 //	public const float maxFitness = 1f;
 
 	public Ray2D leftSensorRay {
@@ -84,20 +86,11 @@ public class HoverCraftNeuralController : MonoBehaviour {
 		boxCollSize = boxColl.size;
 	}
 	public void SetNeuralGraph (NeuralGraph sourceGraph, float mutationMag) {
-//		if (Mathf.Abs (mutationMag) > 0.0001f) {
-			neuralGraph = new NeuralGraph (sourceGraph);
+		neuralGraph = new NeuralGraph (sourceGraph);
 
-		if (!HovercraftEvolutionManager.stopAllMutation)
-			neuralGraph.Mutate (mutationMag);
-//		} else {
-//			neuralGraph = new NeuralGraph (sourceGraph);
-//		}
+		neuralGraph.Mutate (mutationMag);
 
 		timeOfStart = Time.time;
-//		} else {
-//			Debug.Log ("default graph");
-//			neuralGraph = sourceGraph;
-//		}
 
 		int throtalOutputIndex 	= neuralGraph.nodeKeyToIndex ["throtal"];
 		int torqueOutputIndex 	= neuralGraph.nodeKeyToIndex ["torque"];
@@ -111,10 +104,6 @@ public class HoverCraftNeuralController : MonoBehaviour {
 
 		float neuralVal = torqueOutput.currentValue;
 		float sourceVal = sourceGraph.nuronSources [torqueOutputIndex].currentValue;
-
-//		if (neuralVal != sourceVal) {
-//			Debug.Log ("neuralVal: " + neuralVal + ", sourceVal: " + sourceVal);
-//		}
 	}
 	void SetGraph () {
 
@@ -131,25 +120,33 @@ public class HoverCraftNeuralController : MonoBehaviour {
 		this.enabled = true;
 		lastFitnessPivotPoint = new Vector2 (55555f, 55555f);
 		fitnessAtPivotReached = fitness;
-//		swapRays = !swapRays;
+		//		swapRays = !swapRays;
+		gainableFitnessTillNextPivot = minPivotRadius;
 	}
 	bool swapRays = false;
+
 	public void FixedUpdate () {
-		if (lifeTime > 120f) {
-			this.enabled = false;
+		if (lifeTime > 40f) {
+			manager.ResetController (this);
 		}
 		Vector2 pos = transform.position;
 
-//		float distanceToLastPivot = Vector2.Distance (lastFitnessPivotPoint, pos);
-//		if (distanceToLastPivot > minPivotRadius) {
-//			lastFitnessPivotPoint = pos;
-//			fitnessAtPivotReached = fitness;
-//		}
-		fitness += Vector2.Distance (transform.position, previousLoc);
-		previousLoc = transform.position;
+		float distanceToLastPivot = Vector2.Distance (lastFitnessPivotPoint, pos);
+		if (distanceToLastPivot > minPivotRadius) {
+			lastFitnessPivotPoint = pos;
+			fitnessAtPivotReached = fitness;
+			gainableFitnessTillNextPivot = minPivotRadius;
+		}
+//		fitness += Vector2.Distance (transform.position, previousLoc);
+//		fitness += craftController.throtal * Time.deltaTime;
 //
 //		fitness = Mathf.Min (fitness, fitnessAtPivotReached + minPivotRadius);
-//		fitness = Vector2.Distance (startPos, pos);
+		float fitnessToGain = Mathf.Min(Vector2.Distance (previousLoc, pos), Mathf.Max (0f, gainableFitnessTillNextPivot));
+		gainableFitnessTillNextPivot -= fitnessToGain;
+		fitness += fitnessToGain;
+
+		previousLoc = transform.position;
+		fitness += craftController.throtal * Time.deltaTime / 15;
 
 		Ray2D forwardRay = forwardSensorRay;
 		Ray2D rightRay = rightSensorRay;
@@ -181,7 +178,7 @@ public class HoverCraftNeuralController : MonoBehaviour {
 //		Debug.Log (GameMath.sigmoid (throtalOutput.currentValue));
 
 
-		craftController.throtal = Mathf.Max(0.2f, throtalOutput.currentValue);//GameMath.StretchNumber (throtalOutput.currentValue, 0.5f, 2f, 0f, 1f);
+		craftController.throtal = Mathf.Max(0.08f, throtalOutput.currentValue);//GameMath.StretchNumber (throtalOutput.currentValue, 0.5f, 2f, 0f, 1f);
 		craftController.torque = torqueOutput.currentValue; //> 0.5f ? 1f : 0f;//torqueOutput.currentValue;//GameMath.StretchNumber (torqueOutput.currentValue, 0.5f, 2f, 0f, 1f);
 
 //		if (swapRays) {
@@ -189,7 +186,7 @@ public class HoverCraftNeuralController : MonoBehaviour {
 //		}
 	}
 	void OnCollisionEnter2D (Collision2D collision) {
-		this.enabled = false;
+		manager.ResetController (this);
 	}
 
 	public void OnDrawGizmosSelected () {

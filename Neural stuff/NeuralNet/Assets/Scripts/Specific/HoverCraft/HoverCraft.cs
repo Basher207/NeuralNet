@@ -7,8 +7,8 @@ public class HoverCraft : MonoBehaviour {
 	public float maxThrotalForce = 5f;
 	public float maxTorqueForce = 5f;
 
-	public float throtal;
-	public float torque;
+	public float throtal; //These are normalized values from 0, 1
+	public float torque; //Torque is judged as 0 meaning full left, 0.5 meaning forward, 1 meaning full right
 
 	[HideInInspector] public Rigidbody2D rigidBod;
 
@@ -22,6 +22,6 @@ public class HoverCraft : MonoBehaviour {
 		}
 	}
 	void OnCollisionEnter2D (Collision2D collision) {
-		rigidBod.bodyType = RigidbodyType2D.Static;
+		rigidBod.bodyType = RigidbodyType2D.Static; // If the car collids, the car is disabled.
 	}
 }

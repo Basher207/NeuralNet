@@ -10,10 +10,6 @@ public abstract class NuronSource {
 	}
 	public abstract NuronSource GetCopy ();
 }
-
-
-
-
 [System.Serializable]
 public class InputNuron : NuronSource {
 	public float _currentValue;
@@ -33,12 +29,6 @@ public class InputNuron : NuronSource {
 		return newNuron;
 	}
 }
-
-
-
-
-
-
 [System.Serializable]
 public class Nuron : NuronSource {
 	public int [] sourceNuronsIndexes;
@@ -46,6 +36,15 @@ public class Nuron : NuronSource {
 
 
 	float [] inputs;
+
+	public override float currentValue {
+		get {
+			for (int i = 0; i < sourceNuronsIndexes.Length; i++) {
+				inputs[i] = sourceGraph.nuronSources[sourceNuronsIndexes [i]].currentValue;
+			}
+			return neuralNode.sigmoidedWeight (inputs);
+		}
+	}
 
 	public Nuron () {
 		
@@ -61,14 +60,6 @@ public class Nuron : NuronSource {
 		neuralNode = new NeuralNode (sourceNuronsIndexes.Length);
 
 	}
-	public override float currentValue {
-		get {
-			for (int i = 0; i < sourceNuronsIndexes.Length; i++) {
-				inputs[i] = sourceGraph.nuronSources[sourceNuronsIndexes [i]].currentValue;
-			}
-			return neuralNode.sigmoidedWeight (inputs);
-		}
-	}
 	public override NuronSource GetCopy () {
 		Nuron newNuron = new Nuron (this);
 		
@@ -78,7 +69,7 @@ public class Nuron : NuronSource {
 		int mutatedIndex = Random.Range (0, neuralNode.weights.Length);
 
 		neuralNode.weights [mutatedIndex] += Random.Range (-mutationMagnitude, mutationMagnitude);
-		neuralNode.weights [mutatedIndex] = Mathf.Clamp ((neuralNode.weights [mutatedIndex]), -10, 10f);
+		neuralNode.weights [mutatedIndex] = Mathf.Clamp ((neuralNode.weights [mutatedIndex]), -3, 3);
 		//neuralNode.bias += Random.Range (-mutationMagnitude, mutationMagnitude);//continuous 
 
 //		for (int i = 0; i < neuralNode.weights.Length; i++) {
@@ -117,9 +108,7 @@ public class NeuralGraph {
 //			Nuron n = (Nuron)nuronSources [indexOfMutation];
 //			n.Mutate (mutationMagnitude);
 //		}
-		if (HovercraftEvolutionManager.stopAllMutation)
-			return;
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < ((nuronSources.Length - inputKeyToIndex.Count) / 2) + 1; i++) {
 			int indexOfMutation = Random.Range (0, nuronSources.Length);
 			if (nuronSources [indexOfMutation] is Nuron) {
 				Nuron n = (Nuron)nuronSources [indexOfMutation];
