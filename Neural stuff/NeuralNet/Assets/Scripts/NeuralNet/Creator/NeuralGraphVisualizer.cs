@@ -94,6 +94,7 @@ public class NeuralGraph {
 		nuronSources = new NuronSource[copyOf.nuronSources.Length];
 
 		for (int i = 0; i < nuronSources.Length; i++) {
+
 			NuronSource nuronSource = copyOf.nuronSources [i].GetCopy ();
 			nuronSource.sourceGraph = this;
 			nuronSources [i] = nuronSource;

@@ -7,11 +7,13 @@ public class HoverCraftNeuralController : MonoBehaviour {
 
 	public float rayCastAngle = 35f;
 	public float maxRayCastRange = 1f;
+	public float maxVel = 8f;
 	public NeuralGraph neuralGraph;
 
 	[HideInInspector] public InputNuron sensorLeft;
 	[HideInInspector] public InputNuron sensorForward;
 	[HideInInspector] public InputNuron sensorRight;
+	[HideInInspector] public InputNuron velocitySensor;
 	[HideInInspector] public int indexOfHoverCraft;
 	public NuronSource throtalOutput;
 	public NuronSource torqueOutput;
@@ -98,6 +100,8 @@ public class HoverCraftNeuralController : MonoBehaviour {
 		sensorLeft 		= neuralGraph.GetInputNuron ("left");
 		sensorForward 	= neuralGraph.GetInputNuron ("front");
 		sensorRight 	= neuralGraph.GetInputNuron ("right");
+		velocitySensor  = neuralGraph.GetInputNuron ("velocity");
+		
 
 		throtalOutput	= neuralGraph.nuronSources[throtalOutputIndex];
 		torqueOutput	= neuralGraph.nuronSources[torqueOutputIndex];
@@ -168,8 +172,11 @@ public class HoverCraftNeuralController : MonoBehaviour {
 		sensorRight._currentValue = rightDistance / maxRayCastRange;
 		sensorLeft._currentValue = leftDistance / maxRayCastRange;
 		sensorForward._currentValue = forwardDistance / maxRayCastRange;
+		if (velocitySensor != null)
+			velocitySensor._currentValue = rigidBod.velocity.magnitude / maxVel;
+
 //
-		//		Debug.Log ("stuff");
+//		Debug.Log ("stuff");
 //		Debug.Log ("ForwardSensor: " + sensorForward._currentValue);
 //		Debug.Log ("RightSensor: " + sensorRight._currentValue);
 //		Debug.Log ("LeftSensor: " + sensorLeft._currentValue);
