@@ -9,6 +9,7 @@ public abstract class NuronSource {
 		get;
 	}
 	public abstract NuronSource GetCopy ();
+    public abstract void CopyValuesof(NuronSource nuron);
 }
 [System.Serializable]
 public class InputNuron : NuronSource {
@@ -28,6 +29,12 @@ public class InputNuron : NuronSource {
 		InputNuron newNuron = new InputNuron (this);
 		return newNuron;
 	}
+    public override void CopyValuesof(NuronSource source) {
+        InputNuron inputNuron = source as InputNuron;
+        if (inputNuron == null) {
+            _currentValue = inputNuron.currentValue;
+        }
+    }
 }
 [System.Serializable]
 public class Nuron : NuronSource {
@@ -36,13 +43,13 @@ public class Nuron : NuronSource {
 
 
 	float [] inputs;
-
+    
 	public override float currentValue {
 		get {
 			for (int i = 0; i < sourceNuronsIndexes.Length; i++) {
 				inputs[i] = sourceGraph.nuronSources[sourceNuronsIndexes [i]].currentValue;
 			}
-			return neuralNode.sigmoidedWeight (inputs);
+			return neuralNode.n(inputs);
 		}
 	}
 
@@ -70,13 +77,19 @@ public class Nuron : NuronSource {
 
 		neuralNode.weights [mutatedIndex] += Random.Range (-mutationMagnitude, mutationMagnitude);
 		neuralNode.weights [mutatedIndex] = Mathf.Clamp ((neuralNode.weights [mutatedIndex]), -3, 3);
-		//neuralNode.bias += Random.Range (-mutationMagnitude, mutationMagnitude);//continuous 
+        //neuralNode.bias += Random.Range (-mutationMagnitude, mutationMagnitude);//continuous 
 
-//		for (int i = 0; i < neuralNode.weights.Length; i++) {
-//			neuralNode.weights [i] += Random.Range (-mutationMagnitude, mutationMagnitude);
-//			neuralNode.bias += Random.Range (-mutationMagnitude, mutationMagnitude);
-//		}
-	}
+        //		for (int i = 0; i < neuralNode.weights.Length; i++) {
+        //			neuralNode.weights [i] += Random.Range (-mutationMagnitude, mutationMagnitude);
+        //			neuralNode.bias += Random.Range (-mutationMagnitude, mutationMagnitude);
+        //		}
+    }
+    public override void CopyValuesof(NuronSource source) {
+        Nuron nuron = source as Nuron;
+        if (nuron == null) {
+            inputs = (float[])nuron.inputs.Clone();
+        }
+    }
 }
 
 public class NeuralGraph {
@@ -123,6 +136,11 @@ public class NeuralGraph {
 //			}
 //		}
 	}
+    public void CopyValues (NeuralGraph valuesOf) {
+        for (int i = 0; i < valuesOf.nuronSources.Length; i++) {
+            nuronSources[i].CopyValuesof(valuesOf.nuronSources[i]);
+        }
+    }
 	public InputNuron GetInputNuron (string key) {
 		return (InputNuron)nuronSources[inputKeyToIndex[key]];
 	}
